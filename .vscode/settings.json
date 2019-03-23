@@ -1,3 +1,24 @@
 {
-    "python.pythonPath": ".venv\\Scripts\\python.exe"
+    "python.pythonPath": ".venv\\Scripts\\python.exe",
+    "deploy.reloaded": {
+        "packages": [
+            {
+                "name": "fermentation pi",
+                "deployOnSave": true,
+                "targets": [ "raspberry pi share"],
+                "exclude": [
+                    ".venv",
+                    ".vscode",
+                    "**/*.pyc"
+                ]
+            }
+        ],
+        "targets": [
+            {
+                "type": "local",
+                "name": "raspberry pi share",
+                "dir": "\\\\192.168.0.19\\share\\fermentation-rpi"
+            }
+        ]
+    }
 }

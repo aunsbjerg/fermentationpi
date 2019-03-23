@@ -1,2 +1,6 @@
 gpiozero
 flask
+click
+
+# development
+ptvsd

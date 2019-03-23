@@ -72,7 +72,7 @@ class MAX31865(AnalogInputDevice):
             raise Exception('MAX31865: number of wires must be 2, 3 or 4 but was {}'.format(value))
 
         self._write_config(config)
-        self._wires = values
+        self._wires = value
 
     @property
     def bias(self):
@@ -137,10 +137,10 @@ class MAX31865(AnalogInputDevice):
         """
         http://www.analog.com/media/en/technical-documentation/application-notes/AN709_0.pdf
         """
-        resistance = self.resistance
+        resistance = self._read_resistance()
         Z1 = -_RTD_A
         Z2 = _RTD_A * _RTD_A - (4 * _RTD_B)
-        Z3 = (4 * _RTD_B) / self.rtd_nominal
+        Z3 = (4 * _RTD_B) / self._rtd_nominal
         Z4 = 2 * _RTD_B
         temp = Z2 + (Z3 * resistance)
         temp = (math.sqrt(temp) + Z1) / Z4
@@ -192,4 +192,4 @@ class MAX31865(AnalogInputDevice):
         return self._read_byte(_MAX31865_CONFIG_REG)        
 
     def _write_config(self, value):
-        self._write_byte(_MAX31865_CONFIG_REG, config)
+        self._write_byte(_MAX31865_CONFIG_REG, value)
