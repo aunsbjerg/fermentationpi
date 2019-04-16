@@ -1,6 +1,6 @@
-gpiozero
-flask
 click
+pyyaml
+rpi.gpio; sys.platform == 'linux'
 
 # development
 ptvsd
