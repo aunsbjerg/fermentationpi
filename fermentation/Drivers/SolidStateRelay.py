@@ -1,3 +1,4 @@
+import time
 import RPi.GPIO as GPIO
 
 
@@ -38,6 +39,8 @@ class SolidStateRelay:
         else:
             GPIO.output(self._pin, GPIO.LOW if self._active_high else GPIO.HIGH)
 
+        self._timestamp = time.time()
+
 
     def get_state(self):
         """
@@ -52,3 +55,10 @@ class SolidStateRelay:
         Toggle the output relay
         """
         self.set_state(not GPIO.input(self._pin))
+
+
+    def elapsed_time(self):
+        """
+        Returns the time in seconds the relay has been in it's current state.
+        """
+        return time.time() - self._timestamp
