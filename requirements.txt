@@ -1,5 +1,6 @@
 click
 pyyaml
+transitions
 rpi.gpio; sys.platform == 'linux'
 
 # development
