@@ -1,0 +1,21 @@
+fridge_temperature:
+    type: max31865
+    offset: 0.0
+    pins:
+        cs: 8
+        miso: 9
+        mosi: 10
+        clk: 11
+
+beer_temperature:
+    type: tilt
+
+compressor_relay:
+    type: ssr
+    pin: 18
+    active_high: true
+
+heater_relay:
+    type: ssr
+    pin: 18
+    active_high: true
