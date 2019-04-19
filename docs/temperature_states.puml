@@ -1,0 +1,21 @@
+@startuml temperature_states
+
+hide empty description
+
+[*] --> stop
+stop : entry: relays off
+stop --> neutral : start
+neutral --> stop : stop
+neutral : entry: relays off
+
+neutral --> cooling : cooling needed &&\n relay off time > min
+cooling : entry: relay on
+cooling -> neutral : !cooling needed &&\n relay on time > min
+cooling --> stop : stop
+
+neutral --> heating : heating needed &&\n relay off time > min
+heating : entry: relay on
+heating -> neutral : !heating needed &&\n relay on time > min
+heating --> stop : stop
+
+@enduml

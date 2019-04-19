@@ -31,5 +31,6 @@
                 "dir": "\\\\192.168.0.19\\share\\fermentation-rpi"
             }
         ]
-    }
+    },
+    "plantuml.diagramsRoot": "docs"
 }
