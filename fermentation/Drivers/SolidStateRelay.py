@@ -42,7 +42,7 @@ class SolidStateRelay:
         self._timestamp = time.time()
 
 
-    def get_state(self):
+    def state(self):
         """
         Return the output state of the relay given the active low/high setting
         """
