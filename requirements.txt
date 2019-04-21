@@ -1,7 +1,8 @@
 click
+pybluez
 pyyaml
-transitions
 rpi.gpio; sys.platform == 'linux'
+transitions
 
 # development
 ptvsd
