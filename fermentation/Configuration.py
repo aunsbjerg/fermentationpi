@@ -28,6 +28,7 @@ _default_config = {
     },
     'beer_temperature': {
         'type': 'tilt',
+        'colour': 'purple',
     },
     'compressor_relay': {
         'type': 'ssr',

@@ -1,7 +1,7 @@
 import logging
 from Drivers.SolidStateRelay import SolidStateRelay
 from Drivers.MAX31865 import MAX31865
-from Drivers.Tilt import Tilt
+from Drivers.Tilt.Tilt import Tilt
 
 
 logger = logging.getLogger(__name__)
@@ -20,7 +20,7 @@ def temperature_factory(config):
         logger.info('MAX31865 temperature sensor created')
 
     elif config['type'] == 'tilt':
-        sensor = Tilt()
+        sensor = Tilt(tilt_colour=config['colour'])
         logger.info('Tilt temperature sensor created')
 
     else:
@@ -44,3 +44,21 @@ def relay_factory(config):
         raise Exception(f'Unknown relay type, {config["type"]}')
 
     return relay
+
+
+def cleanup_drivers(drivers):
+    """
+    Cleans up drivers depending on their object type.
+    Expects a dictionary of drivers
+    """
+    for name, driver in drivers.items():
+        if isinstance(driver, SolidStateRelay):
+            logger.debug(f"cleaning {name}: setting to off")
+            driver.off()
+
+        elif isinstance(driver, Tilt):
+            logger.debug(f"cleaning {name}: destroying")
+            driver.destroy()
+
+        else:
+            logger.debug(f"cleaning {name}: nothing to do")
