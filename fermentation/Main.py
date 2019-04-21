@@ -11,7 +11,7 @@ import click
 import RPi.GPIO as GPIO
 from Configuration import import_configuration, default_configuration
 from TemperatureControl import TemperatureControl
-from Drivers.Factories import relay_factory, temperature_factory
+from Drivers.Factories import relay_factory, temperature_factory, cleanup_drivers
 
 
 def configure_logger(logpath, loglevel=logging.DEBUG):
@@ -48,11 +48,12 @@ def main(configpath, logpath, setpoint):
 
         config = import_configuration(configpath) if configpath else default_configuration()
 
-        beer_temp = temperature_factory(config['beer_temperature'])
-        fridge_temp = temperature_factory(config['fridge_temperature'])
-        compressor_relay = relay_factory(config['compressor_relay'])
+        drivers = dict()
+        drivers['beer_temp'] = temperature_factory(config['beer_temperature'])
+        drivers['fridge_temp'] = temperature_factory(config['fridge_temperature'])
+        drivers['compressor_relay'] = relay_factory(config['compressor_relay'])
 
-        temp_control = TemperatureControl(fridge_temp, beer_temp, compressor_relay)
+        temp_control = TemperatureControl(drivers['fridge_temp'], drivers['beer_temp'], drivers['compressor_relay'])
         temp_control.set_temperature_setpoint(setpoint)
         temp_control.start()
 
@@ -66,7 +67,7 @@ def main(configpath, logpath, setpoint):
     except Exception:
         logger.error('Exception occured', exc_info=True)
 
-    compressor_relay.off()
+    cleanup_drivers(drivers)
     GPIO.cleanup()
 
 
