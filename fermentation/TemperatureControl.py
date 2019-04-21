@@ -72,7 +72,7 @@ class TemperatureControl:
         fridge_temp = self._fridge_temp.temperature()
         beer_temp = self._beer_temp.temperature()
 
-        logger.debug(f"{self.state} - {relay_state} - {self._comp_relay.elapsed_time():.1f}s - {fridge_temp:.2f}°C - {self._setpoint:.2f}°C")
+        logger.debug(f"{self.state} - {relay_state} - {self._comp_relay.elapsed_time():.1f}s - {beer_temp:.2f}°C - {fridge_temp:.2f}°C - {self._setpoint:.2f}°C")
 
         self._update(temperature=fridge_temp)
 
