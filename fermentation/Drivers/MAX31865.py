@@ -122,6 +122,7 @@ class MAX31865:
 
     def __init__(self, cs_pin, miso_pin, mosi_pin, clk_pin, ref_resistor=430.0, rtd_nominal=100.0, number_of_wires=2):
         assert(number_of_wires >= 2 and number_of_wires <= 4)
+        self._offset = 0.0
         self._cs_pin = cs_pin
         self._miso_pin = miso_pin
         self._mosi_pin = mosi_pin
@@ -157,13 +158,21 @@ class MAX31865:
         pass
 
 
+    def offset(self, offset):
+        """
+        Adjust the temperature offset in celsius.
+        Offset will be added to the temperature reading in temperature()
+        """
+        self._offset = offset
+
+
     def temperature(self):
         """
         Read out temperature. Conversion to °C included.
         """
         rtd = self._read_rtd()
         resistance = self._read_resistance(rtd)
-        return resistance_to_celsius(resistance, rtd_nominal=self._rtd_nominal)
+        return resistance_to_celsius(resistance, rtd_nominal=self._rtd_nominal) + self._offset
 
 
     def _write_register(self, register, data):

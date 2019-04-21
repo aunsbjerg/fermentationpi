@@ -15,8 +15,9 @@ def temperature_factory(config):
     sensor = None
 
     if config['type'] == 'max31865':
-        sensor = MAX31865(cs_pin=config['pins']['cs'], miso_pin=config['pins']['miso'],
-            mosi_pin=config['pins']['mosi'], clk_pin=config['pins']['clk'])
+        pins = config['pins']
+        sensor = MAX31865(cs_pin=pins['cs'], miso_pin=pins['miso'], mosi_pin=pins['mosi'], clk_pin=pins['clk'])
+        sensor.offset(config['offset'])
         logger.info('MAX31865 temperature sensor created')
 
     elif config['type'] == 'tilt':
