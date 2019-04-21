@@ -1,6 +1,7 @@
 click
 pybluez
 pyyaml
+requests
 rpi.gpio; sys.platform == 'linux'
 transitions
 
