@@ -52,7 +52,7 @@ def import_configuration(filepath):
     config = dict()
 
     with open(filepath, 'r') as yamlfile:
-        config = yaml.load(yamlfile)
+        config = yaml.full_load(yamlfile)
 
     return config
 
