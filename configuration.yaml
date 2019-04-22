@@ -1,6 +1,8 @@
+# this file is an example configuration.
+
 fridge_temperature:
     type: max31865
-    offset: 0.0
+    offset: -2.47
     pins:
         cs: 8
         miso: 9
@@ -20,3 +22,9 @@ heater_relay:
     type: ssr
     pin: 18
     active_high: true
+
+integrations:
+  - type: brewers_friend
+    x_api_key: dummy_api_key
+    brew_session_id: dummy_brew_session_id
+    

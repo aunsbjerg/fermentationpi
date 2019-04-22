@@ -1,9 +1,9 @@
 """
 Todo:
-    - integrate with tilt device (see: tiltpi implementation)
     - async implementation using twisted/tornado
     - add web based ui
-    - integrate with brewersfriend api
+    - linux service
+    -
 """
 import logging
 import time
@@ -12,6 +12,7 @@ import RPi.GPIO as GPIO
 from Configuration import import_configuration, default_configuration
 from TemperatureControl import TemperatureControl
 from Drivers.Factories import relay_factory, temperature_factory, cleanup_drivers
+from Integrations.Factories import integration_factory
 
 
 def configure_logger(logpath, loglevel=logging.DEBUG):
@@ -39,7 +40,7 @@ def main(configpath, logpath, setpoint):
     """
     _tbd_
     """
-    configure_logger(logpath)
+    configure_logger(logpath, loglevel=logging.DEBUG)
     logger.info('starting application')
 
     try:
@@ -57,9 +58,24 @@ def main(configpath, logpath, setpoint):
         temp_control.set_temperature_setpoint(setpoint)
         temp_control.start()
 
+        # testing integration
+        # bf = integration_factory(config['integrations'][0])
+        # count = 0
+
         while True:
             time.sleep(1.0)
             temp_control.control_loop()
+
+            # just for testing, should be somewhere else in final implementation
+            # count = count + 1
+
+            # if count > 30:
+            #     count = 0
+            #     temp_beer = drivers['beer_temp'].temperature()
+            #     temp_fridge = drivers['fridge_temp'].temperature()
+            #     grav_beer = drivers['beer_temp'].gravity()
+            #     bf.update(temp_beer, temp_fridge, grav_beer)
+
 
     except KeyboardInterrupt:
         logger.warning('CTRL+C detected, stopping')
