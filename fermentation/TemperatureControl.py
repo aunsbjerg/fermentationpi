@@ -82,6 +82,11 @@ class TemperatureControl:
         logger.debug("{} - {:.1f} - {:.2f}°C / {:.2f}°C - {:.2f}°C / {:.2f}°C".format(self.state,
             self._comp_relay.elapsed_time(), beer_temp, self._beer_setpoint, fridge_temp, self._fridge_setpoint))
 
+        # test for webview
+        self._beer_temperature = beer_temp
+        self._fridge_temperature = fridge_temp
+        self._gravity = self._beer_temp.gravity()
+
 
     def _update_fridge_setpoint(self, beer_temp):
         """

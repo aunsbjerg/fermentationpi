@@ -12,6 +12,7 @@ import RPi.GPIO as GPIO
 from Configuration import import_configuration, default_configuration
 from TemperatureControl import TemperatureControl
 from Drivers.Factories import relay_factory, temperature_factory, cleanup_drivers
+from Web.WebView import start_webview
 
 
 def configure_logger(logpath, loglevel=logging.DEBUG):
@@ -56,6 +57,9 @@ def main(configpath, logpath, setpoint):
         temp_control = TemperatureControl(drivers['fridge_temp'], drivers['beer_temp'], drivers['compressor_relay'])
         temp_control.set_temperature_setpoint(setpoint)
         temp_control.start()
+
+        # for testing
+        start_webview(temp_control)
 
         while True:
             time.sleep(1.0)

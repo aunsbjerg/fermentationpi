@@ -1,0 +1,28 @@
+<script type="text/javascript">
+    var timer = function() {
+        setTimeout(function(){ window.location.reload(); }, 5000);
+    };
+    timer();
+</script>
+
+<html>
+    <head>
+        <title>Fermentation-rpi</title>
+    </head>
+
+    <body>
+        <h1>Fermentation status</h1>
+
+        <label>Gravity: {{ data.gravity }}</label><br/><br/>
+        <label>Beer Temperature: {{ data.beer_temperature }}°C</label><br/>
+
+        <form action="/index" method="POST">
+            <label>Beer Temperature Setpoint: </label>
+            <input name="beer_setpoint" value="{{ data.beer_setpoint }}" maxlength="2" size="2">
+            <label>°C</label>
+        </form>
+        
+        <label>Fridge Temperature: {{ data.fridge_temperature }}°C</label><br/>
+        <label>Fridge Temperature Setpoint: {{ data.fridge_setpoint }}°C</label><br/>
+    </body>
+</html>
