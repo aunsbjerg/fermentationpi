@@ -1,5 +1,6 @@
 click
-pybluez
+flask
+pybluez; sys.platform == 'linux'
 pyyaml
 rpi.gpio; sys.platform == 'linux'
 transitions
