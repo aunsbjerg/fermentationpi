@@ -40,17 +40,21 @@ class TemperatureControl:
         self._beer_temp = beer_temp
         self._comp_relay = comp_relay
 
-        logger.info("initialized")
+        self._fridge_setpoint = 20.0
+        self._beer_setpoint = 20.0
+        self._hysteresis = 0.5
 
-        self.set_temperature_setpoint(20.0)
-        self.set_temperature_hysteresis(0.5)
+        self.set_temperature_setpoint(self._beer_setpoint)
+        self.set_temperature_hysteresis(self._hysteresis)
+
+        logger.info("initialized")
 
 
     def set_temperature_setpoint(self, setpoint):
         """
         Sets the temperature setpoint in celsius
         """
-        self._setpoint = setpoint
+        self._beer_setpoint = setpoint
         logger.info(f"temperature setpoint changed to {setpoint:.2f}°C")
 
 
@@ -72,34 +76,52 @@ class TemperatureControl:
         fridge_temp = self._fridge_temp.temperature()
         beer_temp = self._beer_temp.temperature()
 
-        logger.debug(f"{self.state} - {relay_state} - {self._comp_relay.elapsed_time():.1f}s - {beer_temp:.2f}°C - {fridge_temp:.2f}°C - {self._setpoint:.2f}°C")
+        self._fridge_setpoint = self._update_fridge_setpoint(beer_temp)
+        self._update(fridge_temp, beer_temp)
 
-        self._update(temperature=fridge_temp)
+        logger.debug("{} - {:.1f} - {:.2f}°C / {:.2f}°C - {:.2f}°C / {:.2f}°C".format(self.state,
+            self._comp_relay.elapsed_time(), beer_temp, self._beer_setpoint, fridge_temp, self._fridge_setpoint))
 
 
-    def _cooling_needed(self, temperature, **kwargs):
+    def _update_fridge_setpoint(self, beer_temp):
         """
-        Determines if cooling is needed by looking at state, temperature and hysteresis.
+        To determine if cooling is needed, we calculate a setpoint for the fridge temperature that is proportional
+        to the beer temperature setpoint error. The fridge temp setpoint must never be above beer setpoint and never
+        below beer setpoint by more than 5 degrees.
+
+        By using the beer setpoint error as the basis for the fridge setpoint, we should hopefully take into account
+        the thermal inertia of the beer volume and avoid over/undershooting beer temperature too much.
         """
-        return temperature > (self._setpoint + self._hysteresis) if self.state == 'neutral' else \
-               temperature > (self._setpoint - self._hysteresis) if self.state == 'cooling' else False
+        beer_error = beer_temp - self._beer_setpoint
+        fridge_setpoint = self._beer_setpoint - beer_error
+        fridge_setpoint = min(fridge_setpoint, self._beer_setpoint)
+        fridge_setpoint = max(fridge_setpoint, max(self._beer_setpoint - 5.0, 0.5))
+        return fridge_setpoint
 
 
-    def _cooling_on_allowed(self, **kwargs):
+    def _cooling_needed(self, fridge_temp, beer_temp, *args, **kwargs):
+        """
+        Return true if cooling is needed, false if not.
+        """
+        return fridge_temp > (self._fridge_setpoint + self._hysteresis) if self.state == 'neutral' else \
+               fridge_temp > (self._fridge_setpoint - self._hysteresis) if self.state == 'cooling' else False
+
+
+    def _cooling_on_allowed(self, *args, **kwargs):
         """
         Determines if cooling is actually allowed based on how long the compressor has been turned _off_
         """
         return self._comp_relay.elapsed_time() > COMPRESSOR_MIN_OFF_TIME_SEC
 
 
-    def _cooling_off_allowed(self, **kwargs):
+    def _cooling_off_allowed(self, *args, **kwargs):
         """
         Determines if the compressor has been turned _on_ long enough for it to safely be turned _off_
         """
         return self._comp_relay.elapsed_time() > COMPRESSOR_MIN_ON_TIME_SEC
 
 
-    def _start_cooling(self, **kwargs):
+    def _start_cooling(self, *args, **kwargs):
         """
         Turn on the cooling compressor
         """
@@ -107,7 +129,7 @@ class TemperatureControl:
         logger.info("starting cooling")
 
 
-    def _stop_cooling(self, **kwargs):
+    def _stop_cooling(self, *args, **kwargs):
         """
         Turn of the cooling compressor
         """
@@ -115,28 +137,28 @@ class TemperatureControl:
         logger.info("stopping cooling")
 
 
-    def _heating_needed(self, temperature, **kwargs):
+    def _heating_needed(self, *args, **kwargs):
         """
         _tbd_
         """
         return False # not implemented
 
 
-    def _heating_on_allowed(self, **kwargs):
+    def _heating_on_allowed(self, *args, **kwargs):
         """
         _tbd_
         """
         return False # not implemented
 
 
-    def _heating_off_allowed(self, **kwargs):
+    def _heating_off_allowed(self, *args, **kwargs):
         """
         _tbd_
         """
         return False # not implemented
 
 
-    def _start_heating(self, **kwargs):
+    def _start_heating(self, *args, **kwargs):
         """
         _tbd_
         """
@@ -144,7 +166,7 @@ class TemperatureControl:
         pass # not implemented
 
 
-    def _stop_heating(self, **kwargs):
+    def _stop_heating(self, *args, **kwargs):
         """
         _tbd_
         """
